@@ -130,6 +130,12 @@ def extract(view):
     objects = {sid: m for sid, m in zip(meta["slices"], masks)}
     objects["tiramisu"] = mc[..., 0]
     objects["glass"] = mc[..., 1]
+    # the base plate only differs from the foreground beneath the clickable food;
+    # keep the sharp foreground everywhere else
+    under = np.clip(sum(objects.values()), 0, 1)
+    under = ndi.maximum_filter(under, size=max(9, W // 160))
+    under = ndi.gaussian_filter(under, W / 1440)[..., None]
+    base = fg * (1 - under) + base * under
 
     full = fg[..., :3]
     base_rgb = base[..., :3] * base[..., 3:4] + bg * (1 - base[..., 3:4])
