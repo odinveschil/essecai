@@ -1,0 +1,428 @@
+/* ---------------------------------------------------------------- the room */
+
+.scene {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--night);
+  touch-action: manipulation;
+}
+
+.backdrop {
+  position: absolute;
+  inset: -12%;
+  background-size: cover;
+  background-position: center 40%;
+  filter: blur(44px) brightness(0.5) saturate(1.15);
+}
+
+.stage {
+  position: absolute;
+  --px: 0;
+  --py: 0;
+  transition: filter 0.45s ease;
+}
+
+.scene.is-dimmed .stage {
+  filter: brightness(0.6) saturate(0.88) blur(1.5px);
+}
+
+/* opening: the camera starts a touch closer and out of focus, then settles back */
+.settle {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.045);
+  transform-origin: 50% 56%;
+  filter: blur(7px) brightness(0.8) saturate(0.9);
+  transition:
+    transform 1000ms cubic-bezier(0.22, 0.72, 0.2, 1),
+    filter 850ms cubic-bezier(0.3, 0.6, 0.3, 1);
+}
+
+.stage.is-ready .settle {
+  transform: none;
+  filter: none;
+}
+
+.stage.is-reduced .settle {
+  transform: none;
+  filter: none;
+}
+
+/* the soft preview stands in for the scene until every layer has arrived,
+   then the whole tray resolves at once — nothing pops in piece by piece */
+.hall,
+.table-plate,
+.food {
+  opacity: 0;
+  transition: opacity 520ms ease-out;
+}
+
+.stage.is-ready .hall,
+.stage.is-ready .table-plate,
+.stage.is-ready .food {
+  opacity: 1;
+}
+
+.lqip {
+  position: absolute;
+  inset: 0;
+  background: var(--lqip) center / 100% 100% no-repeat;
+  filter: blur(calc(var(--u) * 1.2));
+}
+
+.hall,
+.table-plate,
+.food,
+.ambient {
+  position: absolute;
+  inset: 0;
+}
+
+.hall-plate {
+  position: absolute;
+  inset: -1.6%;
+  transform: translate3d(calc(var(--px) * var(--u) * -0.9), calc(var(--py) * var(--u) * -0.45), 0);
+}
+
+.hall-plate img,
+.table-plate img,
+.food-layer img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.table-plate,
+.food,
+.hits {
+  transform: translate3d(calc(var(--px) * var(--u) * -0.22), calc(var(--py) * var(--u) * -0.12), 0);
+}
+
+.hall-life {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* bulbs breathing / one or two on a dodgy circuit */
+.glow {
+  position: absolute;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--c) 70%, #fff) 0%,
+    color-mix(in srgb, var(--c) 45%, transparent) 28%,
+    transparent 68%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.12;
+  animation: breathe 7s ease-in-out infinite;
+}
+
+.glow.flicker {
+  animation-name: flicker;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.26;
+  }
+}
+
+@keyframes flicker {
+  0%,
+  40%,
+  100% {
+    opacity: 0.2;
+  }
+  41% {
+    opacity: 0.04;
+  }
+  42% {
+    opacity: 0.3;
+  }
+  44% {
+    opacity: 0.1;
+  }
+  46% {
+    opacity: 0.26;
+  }
+  72% {
+    opacity: 0.18;
+  }
+}
+
+/* people crossing the hall, far out of focus */
+.passerby {
+  position: absolute;
+  left: -10%;
+  height: calc(var(--u) * var(--h));
+  aspect-ratio: 0.4;
+  filter: blur(calc(var(--u) * 0.85));
+  animation: walk-ltr 50s linear infinite;
+}
+
+.passerby.rtl {
+  animation-name: walk-rtl;
+}
+
+.passerby .head,
+.passerby .body {
+  position: absolute;
+  display: block;
+}
+
+.passerby .head {
+  left: 31%;
+  top: 0;
+  width: 38%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #3b2a20;
+}
+
+.passerby .body {
+  left: 6%;
+  right: 6%;
+  top: 16%;
+  bottom: 0;
+  border-radius: 42% 42% 14% 14%;
+  background: var(--c);
+  animation: bob 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes walk-ltr {
+  from {
+    left: -10%;
+  }
+  to {
+    left: 106%;
+  }
+}
+
+@keyframes walk-rtl {
+  from {
+    left: 106%;
+  }
+  to {
+    left: -10%;
+  }
+}
+
+@keyframes bob {
+  to {
+    translate: 0 -2%;
+  }
+}
+
+/* ---------------------------------------------------------------- the food */
+
+.food-layer {
+  position: absolute;
+  transition:
+    transform 460ms cubic-bezier(0.2, 0.8, 0.25, 1),
+    filter 460ms ease;
+  will-change: transform;
+}
+
+.food-layer img {
+  transition: filter 460ms ease;
+  filter: drop-shadow(0 0 0 rgba(30, 12, 4, 0));
+}
+
+.food-slice.is-lifted {
+  z-index: 4;
+  transform: translate3d(0, calc(var(--u) * -0.78), 0);
+}
+
+.food-slice.is-lifted img {
+  filter: drop-shadow(0 calc(var(--u) * 0.7) calc(var(--u) * 0.5) rgba(40, 14, 3, 0.55)) brightness(1.07) saturate(1.06)
+    contrast(1.05);
+}
+
+.food-tiramisu.is-lifted {
+  transform: translate3d(calc(var(--u) * 0.08), calc(var(--u) * -0.32), 0) rotate(-0.35deg);
+}
+
+.food-tiramisu.is-lifted img {
+  filter: drop-shadow(0 calc(var(--u) * 0.35) calc(var(--u) * 0.35) rgba(30, 12, 4, 0.45)) brightness(1.05);
+}
+
+.food-glass.is-lifted {
+  transform: translate3d(0, calc(var(--u) * -0.3), 0);
+}
+
+.food-glass.is-lifted img {
+  filter: drop-shadow(0 calc(var(--u) * 0.32) calc(var(--u) * 0.3) rgba(20, 8, 2, 0.5)) brightness(1.06) contrast(1.04);
+}
+
+/* a soft warm sheen clipped to the object's own silhouette */
+.sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask: var(--mask) center / 100% 100% no-repeat;
+  mask: var(--mask) center / 100% 100% no-repeat;
+  background: radial-gradient(ellipse 60% 45% at 42% 38%, rgba(255, 238, 205, 0.5), rgba(255, 238, 205, 0) 70%);
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  transition: opacity 460ms ease;
+}
+
+.is-lifted .sheen {
+  opacity: 1;
+}
+
+.food-glass .sheen {
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 252, 245, 0.55) 44%,
+    rgba(255, 255, 255, 0) 56%
+  );
+  background-size: 250% 100%;
+  background-position: 120% 0;
+  mix-blend-mode: screen;
+  transition:
+    opacity 300ms ease,
+    background-position 1100ms cubic-bezier(0.3, 0.6, 0.2, 1);
+}
+
+.food-glass.is-lifted .sheen {
+  opacity: 0.55;
+  background-position: -20% 0;
+}
+
+.bubbles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bubbles i {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 236, 210, 0.85), rgba(255, 220, 180, 0.15) 60%, transparent 70%);
+  opacity: 0;
+  animation: rise 4s linear infinite;
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.75;
+  }
+  85% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(var(--rise));
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------------- hit areas */
+
+.hits {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.hit {
+  fill: rgba(0, 0, 0, 0);
+  cursor: pointer;
+  outline: none;
+  stroke: rgba(0, 0, 0, 0);
+  vector-effect: non-scaling-stroke;
+}
+
+.hit:focus-visible {
+  stroke: rgba(255, 222, 168, 0.95);
+  stroke-width: 2px;
+  stroke-dasharray: 1 6;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 3px rgba(255, 180, 90, 0.9));
+}
+
+/* ---------------------------------------------------------------- atmosphere */
+
+.ambient {
+  pointer-events: none;
+}
+
+.steam {
+  position: absolute;
+  mix-blend-mode: screen;
+}
+
+.steam i {
+  position: absolute;
+  bottom: 0;
+  width: 24%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 60%, rgba(255, 244, 228, 0.2), rgba(255, 244, 228, 0) 66%);
+  filter: blur(calc(var(--u) * 1.5));
+  opacity: 0;
+  animation: steam 11s ease-in-out infinite;
+}
+
+@keyframes steam {
+  0% {
+    transform: translate(0, 12%) scale(0.55, 0.7);
+    opacity: 0;
+  }
+  28% {
+    opacity: 0.6;
+  }
+  62% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translate(16%, -78%) scale(1.35, 1.3);
+    opacity: 0;
+  }
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 75% 70% at 50% 58%, rgba(0, 0, 0, 0) 58%, rgba(14, 7, 3, 0.5) 100%);
+}
+
+.grain {
+  position: absolute;
+  inset: -50%;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain 1.2s steps(6) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -1%); }
+  80% { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+.stage.is-reduced .grain {
+  animation: none;
+}

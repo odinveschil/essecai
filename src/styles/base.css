@@ -1,0 +1,75 @@
+:root {
+  --ink: #2a1c13;
+  --ink-soft: #4a3628;
+  --paper: #f5ecdb;
+  --paper-deep: #ecdfc6;
+  --rust: #a3402a;
+  --rust-deep: #7c2b1a;
+  --cream: #f6e7c8;
+  --glow: #ffd89c;
+  --night: #120b07;
+  --serif-display: 'Fraunces Variable', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --serif-text: 'Newsreader Variable', 'Iowan Old Style', Georgia, serif;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--night);
+  color: var(--cream);
+  font-family: var(--serif-text);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
