@@ -55,8 +55,8 @@ src/components/
   ArticleModal.tsx           the article, printed like a menu
   VideoModal.tsx             native video player overlay
   Dialog.tsx                 Escape / click-outside / focus trap / scroll lock
-src/scene/{desktop,mobile}.json   layer rects + hit polygons (generated)
-public/scene/{desktop,mobile}/    rendered layers (generated, WebP @1x/@2x)
+src/scene/desktop.json       layer rects + hit polygons (generated)
+public/scene/desktop/        rendered layers (generated, WebP @1x/@2x)
 scene-render/                the Blender pipeline that produces the scene
 ```
 
@@ -70,9 +70,9 @@ No stock photography and no AI imagery. The whole scene is built and path-traced
 - `passes.py`: renders a sharp foreground, a heavily defocused hall, a base plate with the clickable food removed (shadows kept), and anti-aliased masks for every clickable object.
 - `extract.py`: cuts out each slice, the tiramisu and the glass as their own layers, traces their hit polygons, finds the hall's light positions, and writes everything the web app reads.
 
-Desktop (landscape) and mobile (portrait) are two separate camera set-ups. On mobile the camera looks down the length of the table.
+This is a desktop web app. On other window shapes the same shot is reframed to keep the whole tray in view.
 
-To re-render (needs Python 3.11, roughly 2 hours on 4 CPU cores):
+To re-render (needs Python 3.11, roughly 1.5 hours on 4 CPU cores):
 
 ```bash
 pip install bpy numpy scipy pillow fonttools brotli scikit-image

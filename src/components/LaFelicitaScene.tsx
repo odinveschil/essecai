@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
-import { asset, layoutStage, pickView, scenes } from '../scene'
+import { asset, layoutStage, scene as data } from '../scene'
 import { useFinePointer, useReducedMotion, useViewport } from '../hooks'
 import type { SliceId } from '../content/articles'
 import type { VideoKey } from '../config/videos'
@@ -21,8 +21,7 @@ interface Props {
  */
 export default function LaFelicitaScene({ onOpenArticle, onOpenVideo, dimmed }: Props) {
   const vp = useViewport()
-  const view = pickView(vp.w, vp.h)
-  const data = scenes[view]
+  const view = data.view
   const box = useMemo(() => layoutStage(data, vp.w, vp.h, vp.dpr), [data, vp.w, vp.h, vp.dpr])
   const reduced = useReducedMotion()
   const fine = useFinePointer()
@@ -33,11 +32,9 @@ export default function LaFelicitaScene({ onOpenArticle, onOpenVideo, dimmed }: 
   const [ready, setReady] = useState(false)
   const onLoad = (key: string) => setLoaded((l) => (l[key] ? l : { ...l, [key]: 1 }))
   useEffect(() => {
-    setReady(false)
-    setLoaded({})
     const t = window.setTimeout(() => setReady(true), 7000)
     return () => window.clearTimeout(t)
-  }, [view])
+  }, [])
   useEffect(() => {
     if (Object.keys(loaded).length >= total) setReady(true)
   }, [loaded, total])
@@ -87,9 +84,8 @@ export default function LaFelicitaScene({ onOpenArticle, onOpenVideo, dimmed }: 
       <div className="backdrop" style={{ backgroundImage: `url("${data.lqip}")` }} aria-hidden="true" />
       <div
         ref={stageRef}
-        className={`stage view-${view} ${ready ? 'is-ready' : ''} ${reduced ? 'is-reduced' : ''}`}
+        className={`stage ${ready ? 'is-ready' : ''} ${reduced ? 'is-reduced' : ''}`}
         style={stageStyle}
-        key={view}
       >
         <div className="settle">
           <div className="lqip" aria-hidden="true" />

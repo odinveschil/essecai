@@ -1,7 +1,6 @@
 import desktop from './desktop.json'
-import mobile from './mobile.json'
 
-export type View = 'desktop' | 'mobile'
+export type View = 'desktop'
 export type Density = '1x' | '2x'
 export type Files = Record<Density, string>
 export type Pt = [number, number]
@@ -35,18 +34,10 @@ export interface SceneData {
   pizza: { cx: number; cy: number; rx: number; ry: number }
 }
 
-export const scenes: Record<View, SceneData> = {
-  desktop: desktop as unknown as SceneData,
-  mobile: mobile as unknown as SceneData,
-}
+export const scene = desktop as unknown as SceneData
 
 export function asset(view: View, file: string) {
   return `${import.meta.env.BASE_URL}scene/${view}/${file}`
-}
-
-/** Portrait-ish screens get the shot looking down the length of the table. */
-export function pickView(w: number, h: number): View {
-  return w / h < 0.85 ? 'mobile' : 'desktop'
 }
 
 export interface StageBox {

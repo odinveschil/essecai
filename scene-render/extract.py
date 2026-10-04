@@ -189,5 +189,5 @@ def extract(view):
 
 
 if __name__ == "__main__":
-    for v in sys.argv[1:] or ["desktop", "mobile"]:
+    for v in sys.argv[1:] or ["desktop"]:
         extract(v)
